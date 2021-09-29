@@ -1,0 +1,1 @@
+insert into consumer_inbox (consumer_id, request_id, payload) values (:consumerId, :requestId, :payload)

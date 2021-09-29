@@ -1,0 +1,49 @@
+oci:
+  tenancy: $OCI_TENANCY
+  username: $OCI_USERNAME
+  streaming:
+    stream-pool-id: $OCI_STREAMING_STREAMPOOLID
+    auth-token: $OCI_STREAMING_AUTH_TOKEN
+
+spring:
+  kafka:
+    # change this property if you are using your own
+    # Kafka cluster or your Docker IP is different
+    bootstrap-servers: localhost:9092
+    # enable the below values to use an OCI Streaming
+#    bootstrap-servers: streaming.us-ashburn-1.oci.oraclecloud.com:9092
+#    properties:
+#      security.protocol: SASL_SSL
+#      sasl:
+#        mechanism: PLAIN
+#        jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${oci.tenancy}/${oci.username}/${oci.streaming.stream-pool-id}" password="${oci.streaming.auth-token}";
+    listener:
+      ack-mode: MANUAL
+    consumer:
+#      enable-auto-commit: true
+#      client-id: oci-streaming-consumer
+      group-id: oci-streaming-consumer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      auto-offset-reset: earliest
+    producer:
+#      client-id: oci-streaming-producer
+#      group-id: oci-streaming-producer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      retires: 3
+    topics: spring-boot-test
+  datasource:
+    url: jdbc:oracle:thin:@//localhost:1521/orclpdb1
+    username: streaming
+    password: streaming
+    driver-class-name: oracle.jdbc.OracleDriver
+  hikari:
+    minimumIdle: 5
+    maximumPoolSize: 20
+    idleTimeout: 30000
+    maxLifetime: 2000000
+    connectionTimeout: 30000
+    poolName: ocistreaming
+  liquibase:
+    changeLog: classpath:db/changelog.oracle.xml

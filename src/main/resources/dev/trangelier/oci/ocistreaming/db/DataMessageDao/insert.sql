@@ -1,0 +1,1 @@
+insert into data_message (id, request_id, message) values (:id, :requestId, :message)
